@@ -7,260 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/0f899d99ec.js" crossorigin="anonymous"></script>
     <script type="module">
-      class App {
-  _loaded = false;
-  _options = {};
+      import App from './scripts/app.js';
+      import appConfig from './scripts/app-config.js';
 
-  constructor(options) {
-    this._options = options;
-  }
-
-  load() {
-    this._updateTheme();
-  }
-
-  loadOnReady() {
-    return () => {
-      if (this._loaded) {
-        return;
-      }
-
-      this._addToggleDarkModeListeners();
-      this._addLinks();
-
-      this._loaded = true;
-    };
-  }
-
-  _addLinks() {
-    let containerNode = document.querySelector('#item-container');
-
-    if (!containerNode) {
-      return;
-    }
-
-    let linkNode = containerNode.querySelector(`#item-template-${this._options.style}`);
-    let categoryNode = containerNode.querySelector('#item-category');
-
-    if (!linkNode || !categoryNode) {
-      return;
-    }
-
-    let categoryNodeClone = categoryNode.cloneNode();
-
-    for (const categoryChildNode of categoryNode.children) {
-      if (categoryChildNode.id.includes('item-category')) {
-        categoryNodeClone.appendChild(categoryChildNode);
-      }
-    }
-
-    containerNode.innerHTML = '';
-
-    if (this._options.categories && this._options.categories.length > 0) {
-      for (const category of this._options.categories) {
-        containerNode.appendChild(this._createCategoryNode(category, categoryNodeClone, linkNode));
-      }
-    }
-  }
-
-  _createCategoryNode(category, categoryTemplate, linkTemplate) {
-    let node = categoryTemplate.cloneNode(true);
-
-    let nameNode = node.querySelector('#item-category-name');
-    if (nameNode && category.name) {
-      nameNode.innerHTML = '';
-      nameNode.appendChild(document.createTextNode(category.name));
-    }
-
-    if (category.links && category.links.length > 0) {
-      for (const link of category.links) {
-        node.appendChild(this._createLinkNode(link, linkTemplate));
-      }
-    }
-
-    return node;
-  }
-
-  _createLinkNode(link, template) {
-    let node = template.cloneNode(true);
-
-    let nameNode = node.querySelector('#item-name');
-    if (nameNode && link.name) {
-      nameNode.innerHTML = '';
-      nameNode.appendChild(document.createTextNode(link.name));
-    }
-
-    let descriptionNode = node.querySelector('#item-description');
-    if (descriptionNode) {
-      if (!link.description) {
-        descriptionNode.remove();
-      } else {
-        descriptionNode.innerHTML = '';
-        descriptionNode.appendChild(document.createTextNode(link.description));
-      }
-    }
-
-    let hrefNode = node.querySelector('#item-link');
-    if (hrefNode && link.href) {
-      hrefNode.href = link.href;
-    }
-
-    let imageNode = node.querySelector('#item-background-image');
-    if (imageNode) {
-      if (!link.image) {
-        imageNode.remove();
-      } else {
-        imageNode.style = `background-image: url('${link.image}')`;
-      }
-    }
-
-    imageNode = node.querySelector('#item-image');
-    if (imageNode) {
-      if (!link.image) {
-        imageNode.remove();
-      } else {
-        imageNode.src = link.image;
-      }
-    }
-
-    let iconContainerNode = node.querySelector('#item-icon-container');
-    if (iconContainerNode) {
-      if (!link.icon) {
-        iconContainerNode.remove();
-      } else {
-        iconContainerNode.classList.remove('bg-cyan-500');
-
-        if (link.iconBackground) {
-          iconContainerNode.classList.add(`bg-${link.iconBackground}`);
-        }
-
-        if (link.iconDarkBackground) {
-          iconContainerNode.classList.add(`dark:bg-${link.iconBackground}`);
-        }
-
-        let iconNode = iconContainerNode.querySelector('#item-icon');
-
-        if (iconNode && link.icon) {
-          iconNode.classList.remove('text-white');
-          iconNode.classList.remove('fa-rotate');
-          iconNode.classList.add(link.icon);
-
-          if (link.iconColor) {
-            iconNode.classList.add(`text-${link.iconColor}`);
-          }
-
-          if (link.iconDarkColor) {
-            iconNode.classList.add(`dark:text-${link.iconDarkColor}`);
-          }
-        }
-      }
-    }
-
-    return node;
-  }
-
-  _updateTheme() {
-    // Set default dark mode
-    if (!('dark-mode' in localStorage)) {
-      localStorage.setItem('dark-mode', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'true' : 'false');
-    }
-
-    // Set dark mode on page load
-    if (localStorage.getItem('dark-mode') === 'true') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }
-
-  _addToggleDarkModeListeners() {
-    let items = document.querySelectorAll('.light-switch');
-
-    for (const item of items) {
-      item.addEventListener('click', () => {
-        console.log('test');
-        if (document.documentElement.classList.contains('dark')) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('dark-mode', 'false');
-        } else {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('dark-mode', 'true');
-        }
-      });
-    }
-  }
-}
-
-export default App;
-
-
-      /*
-       * {
-       *   style: null, // null to display all available styles
-       *   categories: [
-       *     {
-       *       name: '<category_name>',
-       *       links: [
-       *         {
-       *           name: '<name>',
-       *           href: '<link>',
-       *           description: '<description>', // (optional)
-       *           image: '<image>', // (optional)
-       *           icon: '<icon>', // (optional) An icon from https://fontawesome.com/search, format: fa-<name>
-       *           iconColor: '<color>', // (optional) A color from https://tailwindcss.com/docs/customizing-colors, format: <name>[-<weight>]
-       *           iconDarkColor: '<color>', // (optional) @see iconColor
-       *           iconBackground: '<color>', // (optional) @see iconColor
-       *           iconDarkBackground: '<color>', // (optional) @see iconColor
-       *         },
-       *       ],
-       *     },
-       *   ],
-       * }
-       */
-
-      let app = new App({
-        style: 'image-left',
-        categories: [
-          {
-            name: 'Primary Category',
-            links: [
-              {
-                name: 'Library',
-                href: 'https://kunsevchina.ddns.net:3001/',
-                description: 'A library app that holds every book the owner read or wanted to read.',
-                image: 'img/logo/library.png',
-                icon: 'fa-book',
-                iconColor: 'gray-50',
-                iconDarkColor: 'gray-50',
-                iconBackground: 'teal-500',
-                iconDarkBackground: 'teal-400',
-              },
-              {
-                name: 'Finance Manager',
-                href: 'https://kunsevchina.ddns.net:3002/',
-                description: 'Don\'t skip taxes kids!',
-                image: 'img/logo/finance-management.png',
-                icon: 'fa-wallet',
-                iconColor: 'gray-50',
-                iconDarkColor: 'gray-50',
-                iconBackground: 'lime-600',
-                iconDarkBackground: 'lime-500',
-              },
-              {
-                name: 'SyncThing',
-                href: 'https://kunsevchina.ddns.net:3003/',
-                description: 'SyncThing is a continuous file synchronization program. It synchronizes files between two or more computers in real time, safely protected from prying eyes. Your data is your data alone and you deserve to choose where it is stored, whether it is shared with some third party, and how it’s transmitted over the internet.',
-                image: 'img/logo/syncthing.svg',
-                icon: 'fa-rotate',
-                iconColor: 'gray-50',
-                iconDarkColor: 'gray-50',
-                iconBackground: 'sky-500',
-                iconDarkBackground: 'sky-400',
-              },
-            ],
-          },
-        ],
-      });
+      let app = new App(appConfig);
 
       tailwind.config = {
         darkMode: 'class',
@@ -300,8 +50,8 @@ export default App;
     <header
       class="sticky top-0 z-40 flex w-full items-center justify-between bg-gray-50/30 px-4 py-2 shadow-lg backdrop-blur transition-colors duration-200 lg:z-50 lg:border-b lg:border-slate-900/10 dark:border-slate-50/[0.06] dark:bg-slate-900/30"
     >
-      <img src="img/logo.png" class="h-12 rounded" alt="Logo" />
-      <h1 class="text-2xl font-bold">Kunsevchina</h1>
+      <img id="app-logo" src="img/logo.png" class="h-12 rounded" alt="Logo" />
+      <h1 id="app-name" class="text-2xl font-bold">Kunsevchina</h1>
       <button class="light-switch h-12 w-12 rounded-lg p-2 hover:bg-gray-200 dark:hover:bg-slate-800">
         <i class="fas fa-solid fa-moon fa-xl block text-indigo-500 dark:hidden"></i>
         <i class="fas fa-solid fa-sun fa-xl hidden text-yellow-500 dark:block"></i>
@@ -363,8 +113,8 @@ export default App;
             target="_blank"
             class="relative flex w-full transform flex-col overflow-hidden rounded-lg bg-gray-50 px-6 py-8 shadow-lg ring-1 ring-slate-900/5 transition duration-200 hover:scale-105 hover:shadow-xl md:flex-row dark:bg-slate-700"
           >
-            <div class="mb-4 flex flex-col items-center md:mb-0 md:flex-row md:mr-6">
-              <img id="item-image" class="h-full w-24 md:w-16 rounded-lg" src="img/logo.png" />
+            <div class="mb-4 flex flex-col items-center md:mb-0 md:mr-6 md:flex-row">
+              <img id="item-image" class="h-full w-24 rounded-lg md:w-16" src="img/logo.png" />
             </div>
             <div class="flex w-full flex-col justify-center">
               <div>
