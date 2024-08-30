@@ -27,8 +27,24 @@
 export default {
   name: 'Kunsevchina',
   logo: 'img/logo.png',
-  style: 'image-left',
+  style: 'image-background',
   categories: [
+    {
+      name: 'Hui',
+      links: [
+        {
+          name: 'Library',
+          href: 'https://kunsevchina.ddns.net:3001/',
+          description: 'A library app that holds every book the owner read or wanted to read.',
+          image: 'img/logo/library.png',
+          icon: 'fa-book',
+          iconColor: 'gray-50',
+          iconDarkColor: 'gray-50',
+          iconBackground: 'teal-500',
+          iconDarkBackground: 'teal-400',
+        },
+      ]
+    },
     {
       name: 'Primary Category',
       links: [
